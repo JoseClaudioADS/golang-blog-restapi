@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/JoseClaudioADS/golang-blog-restapi/app/infra"
 	"github.com/gorilla/mux"
 )
 
@@ -12,6 +13,10 @@ func New() *App {
 	app := &App{
 		Router: mux.NewRouter(),
 	}
+
+	db := infra.DB{}
+	db.Open()
+	defer db.Close()
 
 	initRoutes(app)
 	return app
