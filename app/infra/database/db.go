@@ -1,4 +1,4 @@
-package infra
+package database
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 )
 
 type DB struct {
-	Database *sqlx.DB
+	Connection *sqlx.DB
 }
 
 func (db *DB) Open() {
@@ -16,9 +16,9 @@ func (db *DB) Open() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	db.Database = databaseConnection
+	db.Connection = databaseConnection
 }
 
 func (db *DB) Close() error {
-	return db.Database.Close()
+	return db.Connection.Close()
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/JoseClaudioADS/golang-blog-restapi/app/domain"
+	"github.com/JoseClaudioADS/golang-blog-restapi/app/infra/database"
 	"github.com/JoseClaudioADS/golang-blog-restapi/app/service"
 	"github.com/go-playground/validator/v10"
 )
@@ -15,7 +16,11 @@ type CreateBlogRequest struct {
 	Author      string `validate:"required,gte=2,lte=250"`
 }
 
-func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
+type CreateBlogHandler struct {
+	DB database.DB
+}
+
+func (c CreateBlogHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	var createBlogRequest CreateBlogRequest
 
@@ -39,7 +44,7 @@ func CreateBlogHandler(w http.ResponseWriter, r *http.Request) {
 		Description: createBlogRequest.Description,
 		Author:      createBlogRequest.Author,
 	}
-
+	c.DB.Connection.MustExec("SELECT * FROM blog ORDER BY title ASC")
 	service.CreateBlogService{}.Execute(blog)
 	w.WriteHeader(http.StatusCreated)
 }
