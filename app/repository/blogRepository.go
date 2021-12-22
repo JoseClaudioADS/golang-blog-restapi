@@ -7,6 +7,7 @@ import (
 
 type BlogRepository interface {
 	Create(blog *model.Blog) error
+	List() ([]model.Blog, error)
 }
 
 type blogRepositoryDatabase struct {
@@ -22,4 +23,10 @@ func NewBlogRepositoryDatabase(db *database.DB) BlogRepository {
 func (b blogRepositoryDatabase) Create(blog *model.Blog) error {
 	_, err := b.db.Connection.NamedExec("INSERT INTO BLOG (title, description, author) VALUES (:title, :description, :author)", &blog)
 	return err
+}
+
+func (b blogRepositoryDatabase) List() ([]model.Blog, error) {
+	blogs := []model.Blog{}
+	err := b.db.Connection.Select(&blogs, "SELECT * FROM BLOG")
+	return blogs, err
 }

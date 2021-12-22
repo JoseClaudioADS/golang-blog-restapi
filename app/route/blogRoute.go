@@ -15,4 +15,7 @@ func InitBlogRoutes(router *mux.Router, db *database.DB) {
 	newBlogHandler := handler.NewBlogHandler(&blogRepository)
 	router.HandleFunc("", newBlogHandler.Handle).Methods(http.MethodPost)
 
+	newListBlogHandler := handler.NewListBlogHandler(&blogRepository)
+	router.HandleFunc("", newListBlogHandler.Handle).Methods(http.MethodGet)
+
 }
