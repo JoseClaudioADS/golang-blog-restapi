@@ -7,10 +7,10 @@ import (
 
 type App struct {
 	Router *mux.Router
-	DB     database.DB
+	DB     *database.DB
 }
 
-func New(db database.DB) *App {
+func New(db *database.DB) *App {
 	app := &App{
 		Router: mux.NewRouter(),
 		DB:     db,

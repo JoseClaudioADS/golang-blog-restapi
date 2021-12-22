@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/JoseClaudioADS/golang-blog-restapi/app/domain"
-	"github.com/JoseClaudioADS/golang-blog-restapi/app/infra/database"
-	"github.com/JoseClaudioADS/golang-blog-restapi/app/service"
+	"github.com/JoseClaudioADS/golang-blog-restapi/app/model"
+	"github.com/JoseClaudioADS/golang-blog-restapi/app/repository"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -16,11 +15,17 @@ type CreateBlogRequest struct {
 	Author      string `validate:"required,gte=2,lte=250"`
 }
 
-type CreateBlogHandler struct {
-	DB database.DB
+type createBlogHandler struct {
+	blogRepository *repository.BlogRepository
 }
 
-func (c CreateBlogHandler) Handle(w http.ResponseWriter, r *http.Request) {
+func NewBlogHandler(blogRepository *repository.BlogRepository) createBlogHandler {
+	return createBlogHandler{
+		blogRepository: blogRepository,
+	}
+}
+
+func (c createBlogHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	var createBlogRequest CreateBlogRequest
 
@@ -39,12 +44,11 @@ func (c CreateBlogHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	blog := domain.Blog{
+	blog := model.Blog{
 		Title:       createBlogRequest.Title,
 		Description: createBlogRequest.Description,
 		Author:      createBlogRequest.Author,
 	}
-	c.DB.Connection.MustExec("SELECT * FROM blog ORDER BY title ASC")
-	service.CreateBlogService{}.Execute(blog)
+	(*c.blogRepository).Create(&blog)
 	w.WriteHeader(http.StatusCreated)
 }

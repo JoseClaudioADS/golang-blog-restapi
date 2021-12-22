@@ -18,7 +18,7 @@ func main() {
 	defer db.Close()
 	db.Connection.MustExec(database.DatabaseSchema)
 
-	server := app.New(db)
+	server := app.New(&db)
 
 	http.Handle("/", server.Router)
 
