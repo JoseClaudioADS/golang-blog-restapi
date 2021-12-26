@@ -11,11 +11,11 @@ import (
 
 func InitBlogRoutes(router *mux.Router, db *database.DB) {
 	blogRepository := repository.NewBlogRepositoryDatabase(db)
+	blogHandler := handler.NewBlogHandler(&blogRepository)
 
-	newBlogHandler := handler.NewBlogHandler(&blogRepository)
-	router.HandleFunc("", newBlogHandler.Handle).Methods(http.MethodPost)
-
-	newListBlogHandler := handler.NewListBlogHandler(&blogRepository)
-	router.HandleFunc("", newListBlogHandler.Handle).Methods(http.MethodGet)
+	router.HandleFunc("", blogHandler.CreateHandle).Methods(http.MethodPost)
+	router.HandleFunc("", blogHandler.ListHandle).Methods(http.MethodGet)
+	router.HandleFunc("/{id:[0-9]+}", blogHandler.GetHandle).Methods(http.MethodGet)
+	router.HandleFunc("/{id:[0-9]+}", blogHandler.DeleteHandle).Methods(http.MethodDelete)
 
 }
